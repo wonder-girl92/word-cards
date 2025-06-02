@@ -50,7 +50,7 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
 
       // Create a temporary container for the download version
       const container = document.createElement('div');
-      container.style.width = '800px'; // Larger size for better quality
+      container.style.width = '800px';
       container.style.height = '400px';
       container.style.position = 'absolute';
       container.style.left = '-9999px';
@@ -61,9 +61,10 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
       downloadCard.style.width = '100%';
       downloadCard.style.height = '100%';
       downloadCard.style.display = 'flex';
-      downloadCard.style.gap = '20px';
+      downloadCard.style.gap = '0px';
       downloadCard.style.padding = '20px';
       downloadCard.style.backgroundColor = '#f5e6d3';
+      downloadCard.style.position = 'relative';
 
       // Front side
       const frontSide = document.createElement('div');
@@ -75,6 +76,7 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
       frontSide.style.backgroundColor = '#f5e6d3';
       frontSide.style.borderRadius = '12px';
       frontSide.style.padding = '20px';
+      frontSide.style.borderRight = '2px dashed #8b7355';
       frontSide.innerHTML = `
         <h2 style="font-size: 32px; color: #2d3748; margin-bottom: 16px; font-weight: bold;">${card.word}</h2>
         ${card.transcription ? `<p style="font-size: 24px; color: #4a5568;">${card.transcription}</p>` : ''}
@@ -91,19 +93,31 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
       backSide.style.backgroundColor = '#f5e6d3';
       backSide.style.borderRadius = '12px';
       backSide.style.padding = '20px';
+      backSide.style.borderLeft = '2px dashed #8b7355';
       backSide.innerHTML = `
         <h3 style="font-size: 24px; color: #4a5568; margin-bottom: 16px;">Translation</h3>
         <p style="font-size: 32px; color: #2d3748; font-weight: 500;">${card.translation}</p>
       `;
 
+      // Add scissors icon at the top of the dotted line
+      const scissorsIcon = document.createElement('div');
+      scissorsIcon.style.position = 'absolute';
+      scissorsIcon.style.top = '10px';
+      scissorsIcon.style.left = '50%';
+      scissorsIcon.style.transform = 'translateX(-50%)';
+      scissorsIcon.style.color = '#8b7355';
+      scissorsIcon.style.fontSize = '20px';
+      scissorsIcon.innerHTML = '✂️';
+
       downloadCard.appendChild(frontSide);
       downloadCard.appendChild(backSide);
+      downloadCard.appendChild(scissorsIcon);
       container.appendChild(downloadCard);
 
       // Capture the download version
       const canvas = await html2canvas(container, {
         backgroundColor: '#f5e6d3',
-        scale: 2, // Higher quality
+        scale: 2,
       });
 
       // Clean up
