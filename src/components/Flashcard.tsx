@@ -12,10 +12,13 @@ interface FlashcardProps {
 const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
   const [isFlipped, setIsFlipped] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
   const handleFlip = () => {
-    setIsFlipped(!isFlipped);
+    if (!isDownloading) {
+      setIsFlipped(!isFlipped);
+    }
   };
 
   const handleEdit = (e: React.MouseEvent) => {
@@ -43,28 +46,83 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
     if (!cardRef.current) return;
 
     try {
-      // Force flip to show translation
-      setIsFlipped(true);
-      
-      // Wait for the flip animation to complete
-      await new Promise(resolve => setTimeout(resolve, 500));
+      setIsDownloading(true);
 
-      const canvas = await html2canvas(cardRef.current, {
-        backgroundColor: null,
+      // Create a temporary container for the download version
+      const container = document.createElement('div');
+      container.style.width = '800px'; // Larger size for better quality
+      container.style.height = '400px';
+      container.style.position = 'absolute';
+      container.style.left = '-9999px';
+      document.body.appendChild(container);
+
+      // Create the download version of the card
+      const downloadCard = document.createElement('div');
+      downloadCard.style.width = '100%';
+      downloadCard.style.height = '100%';
+      downloadCard.style.display = 'flex';
+      downloadCard.style.gap = '20px';
+      downloadCard.style.padding = '20px';
+      downloadCard.style.backgroundColor = '#f5e6d3';
+
+      // Front side
+      const frontSide = document.createElement('div');
+      frontSide.style.flex = '1';
+      frontSide.style.display = 'flex';
+      frontSide.style.flexDirection = 'column';
+      frontSide.style.justifyContent = 'center';
+      frontSide.style.alignItems = 'center';
+      frontSide.style.backgroundColor = '#f5e6d3';
+      frontSide.style.borderRadius = '12px';
+      frontSide.style.padding = '20px';
+      frontSide.innerHTML = `
+        <h2 style="font-size: 32px; color: #2d3748; margin-bottom: 16px; font-weight: bold;">${card.word}</h2>
+        ${card.transcription ? `<p style="font-size: 24px; color: #4a5568;">${card.transcription}</p>` : ''}
+        ${card.category ? `<div style="position: absolute; top: 12px; left: 12px; background: rgba(255,255,255,0.8); padding: 4px 8px; border-radius: 12px; font-size: 14px; color: #4a5568;">${card.category}</div>` : ''}
+      `;
+
+      // Back side
+      const backSide = document.createElement('div');
+      backSide.style.flex = '1';
+      backSide.style.display = 'flex';
+      backSide.style.flexDirection = 'column';
+      backSide.style.justifyContent = 'center';
+      backSide.style.alignItems = 'center';
+      backSide.style.backgroundColor = '#f5e6d3';
+      backSide.style.borderRadius = '12px';
+      backSide.style.padding = '20px';
+      backSide.innerHTML = `
+        <h3 style="font-size: 24px; color: #4a5568; margin-bottom: 16px;">Translation</h3>
+        <p style="font-size: 32px; color: #2d3748; font-weight: 500;">${card.translation}</p>
+      `;
+
+      downloadCard.appendChild(frontSide);
+      downloadCard.appendChild(backSide);
+      container.appendChild(downloadCard);
+
+      // Capture the download version
+      const canvas = await html2canvas(container, {
+        backgroundColor: '#f5e6d3',
         scale: 2, // Higher quality
       });
 
+      // Clean up
+      document.body.removeChild(container);
+
+      // Download the image
       const link = document.createElement('a');
       link.download = `flashcard-${card.word}.jpg`;
       link.href = canvas.toDataURL('image/jpeg', 0.9);
       link.click();
 
-      // Reset card state after download
-      setIsFlipped(false);
+      setIsDownloading(false);
     } catch (error) {
       console.error('Error downloading card:', error);
+      setIsDownloading(false);
     }
   };
+
+  const bgColor = 'bg-[#f5e6d3]';
 
   return (
     <div 
@@ -79,7 +137,7 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
       >
         {/* Front side */}
         <div 
-          className={`absolute w-full h-full backface-hidden rounded-xl shadow-md bg-[url('https://images.pexels.com/photos/1939485/pexels-photo-1939485.jpeg')] bg-cover p-6 flex flex-col justify-center ${
+          className={`absolute w-full h-full backface-hidden rounded-xl shadow-md ${bgColor} p-6 flex flex-col justify-center ${
             isFlipped ? 'opacity-0' : 'opacity-100'
           }`}
         >
@@ -101,7 +159,7 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
 
         {/* Back side */}
         <div 
-          className={`absolute w-full h-full backface-hidden rounded-xl shadow-md bg-[url('https://images.pexels.com/photos/1939485/pexels-photo-1939485.jpeg')] bg-cover p-6 flex flex-col justify-center rotate-y-180 ${
+          className={`absolute w-full h-full backface-hidden rounded-xl shadow-md ${bgColor} p-6 flex flex-col justify-center rotate-y-180 ${
             isFlipped ? 'opacity-100' : 'opacity-0'
           }`}
         >
@@ -120,7 +178,7 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
         </div>
 
         {/* Control buttons */}
-        {!isDeleting && (
+        {!isDeleting && !isDownloading && (
           <div className="absolute top-3 right-3 flex space-x-2 z-10" onClick={e => e.stopPropagation()}>
             <button 
               onClick={handleDownload}
