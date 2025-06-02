@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Flashcard as FlashcardType } from '../types';
-import { Trash2, Edit } from 'lucide-react';
+import { Trash2, Edit, Download } from 'lucide-react';
+import html2canvas from 'html2canvas';
 
 interface FlashcardProps {
   card: FlashcardType;
@@ -11,6 +12,7 @@ interface FlashcardProps {
 const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
   const [isFlipped, setIsFlipped] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
 
   const handleFlip = () => {
     setIsFlipped(!isFlipped);
@@ -36,8 +38,37 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
     setIsDeleting(false);
   };
 
+  const handleDownload = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!cardRef.current) return;
+
+    try {
+      // Force flip to show translation
+      setIsFlipped(true);
+      
+      // Wait for the flip animation to complete
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      const canvas = await html2canvas(cardRef.current, {
+        backgroundColor: null,
+        scale: 2, // Higher quality
+      });
+
+      const link = document.createElement('a');
+      link.download = `flashcard-${card.word}.jpg`;
+      link.href = canvas.toDataURL('image/jpeg', 0.9);
+      link.click();
+
+      // Reset card state after download
+      setIsFlipped(false);
+    } catch (error) {
+      console.error('Error downloading card:', error);
+    }
+  };
+
   return (
     <div 
+      ref={cardRef}
       className="relative w-full h-56 perspective-1000 cursor-pointer"
       onClick={handleFlip}
     >
@@ -48,42 +79,42 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
       >
         {/* Front side */}
         <div 
-          className={`absolute w-full h-full backface-hidden rounded-xl shadow-md bg-gradient-to-br from-indigo-500 to-purple-600 p-6 flex flex-col justify-center ${
+          className={`absolute w-full h-full backface-hidden rounded-xl shadow-md bg-[url('https://images.pexels.com/photos/1939485/pexels-photo-1939485.jpeg')] bg-cover p-6 flex flex-col justify-center ${
             isFlipped ? 'opacity-0' : 'opacity-100'
           }`}
         >
-          <div className="flex flex-col items-center justify-center text-white">
+          <div className="flex flex-col items-center justify-center text-gray-800">
             <h3 className="text-2xl font-bold mb-2">{card.word}</h3>
             {card.transcription && (
-              <p className="text-lg text-indigo-100">{card.transcription}</p>
+              <p className="text-lg text-gray-600">{card.transcription}</p>
             )}
             {card.category && (
-              <div className="absolute top-3 left-3 bg-white/20 text-white text-xs py-1 px-2 rounded-full">
+              <div className="absolute top-3 left-3 bg-white/80 text-gray-700 text-xs py-1 px-2 rounded-full">
                 {card.category}
               </div>
             )}
           </div>
-          <div className="text-white/70 text-sm absolute bottom-3 left-0 right-0 text-center">
+          <div className="text-gray-600 text-sm absolute bottom-3 left-0 right-0 text-center">
             Click to flip
           </div>
         </div>
 
         {/* Back side */}
         <div 
-          className={`absolute w-full h-full backface-hidden rounded-xl shadow-md bg-white p-6 flex flex-col justify-center rotate-y-180 ${
+          className={`absolute w-full h-full backface-hidden rounded-xl shadow-md bg-[url('https://images.pexels.com/photos/1939485/pexels-photo-1939485.jpeg')] bg-cover p-6 flex flex-col justify-center rotate-y-180 ${
             isFlipped ? 'opacity-100' : 'opacity-0'
           }`}
         >
           <div className="flex flex-col items-center justify-center">
-            <h3 className="text-lg text-gray-500 mb-2">Translation</h3>
+            <h3 className="text-lg text-gray-600 mb-2">Translation</h3>
             <p className="text-2xl font-medium text-gray-800">{card.translation}</p>
             {card.category && (
-              <div className="absolute top-3 left-3 bg-gray-100 text-gray-600 text-xs py-1 px-2 rounded-full">
+              <div className="absolute top-3 left-3 bg-white/80 text-gray-700 text-xs py-1 px-2 rounded-full">
                 {card.category}
               </div>
             )}
           </div>
-          <div className="text-gray-400 text-sm absolute bottom-3 left-0 right-0 text-center">
+          <div className="text-gray-600 text-sm absolute bottom-3 left-0 right-0 text-center">
             Click to flip back
           </div>
         </div>
@@ -91,10 +122,16 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
         {/* Control buttons */}
         {!isDeleting && (
           <div className="absolute top-3 right-3 flex space-x-2 z-10" onClick={e => e.stopPropagation()}>
+            <button 
+              onClick={handleDownload}
+              className="p-1.5 bg-white/80 hover:bg-white/90 text-gray-700 rounded-full transition-colors"
+            >
+              <Download size={16} />
+            </button>
             {onEdit && (
               <button 
                 onClick={handleEdit}
-                className="p-1.5 bg-white/20 hover:bg-white/30 text-white rounded-full transition-colors"
+                className="p-1.5 bg-white/80 hover:bg-white/90 text-gray-700 rounded-full transition-colors"
               >
                 <Edit size={16} />
               </button>
@@ -102,7 +139,7 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
             {onDelete && (
               <button 
                 onClick={handleDelete}
-                className="p-1.5 bg-white/20 hover:bg-red-400 text-white rounded-full transition-colors"
+                className="p-1.5 bg-white/80 hover:bg-red-400 text-gray-700 rounded-full transition-colors"
               >
                 <Trash2 size={16} />
               </button>
