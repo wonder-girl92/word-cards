@@ -1,2 +1,2 @@
-word-cards
+word-cards  
 npm run dev
