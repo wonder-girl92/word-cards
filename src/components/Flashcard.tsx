@@ -115,12 +115,22 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
         ${card.transcription ? `<p style="font-size: 24px; color: #4a5568; text-align: center;">${card.transcription}</p>` : ''}
       `;
 
+      // Add Razet signature
+      const signature = document.createElement('div');
+      signature.style.position = 'absolute';
+      signature.style.bottom = '12px';
+      signature.style.right = '12px';
+      signature.style.fontStyle = 'italic';
+      signature.style.color = '#8b7355';
+      signature.style.fontSize = '14px';
+      signature.textContent = 'Razet';
+      frontSide.appendChild(signature);
+
       if (card.category) {
         const categoryDiv = document.createElement('div');
         categoryDiv.style.position = 'absolute';
-        categoryDiv.style.bottom = '12px';
-        categoryDiv.style.left = '50%';
-        categoryDiv.style.transform = 'translateX(-50%)';
+        categoryDiv.style.top = '12px';
+        categoryDiv.style.left = '12px';
         categoryDiv.style.background = 'rgba(255,255,255,0.8)';
         categoryDiv.style.padding = '4px 8px';
         categoryDiv.style.borderRadius = '12px';
