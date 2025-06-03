@@ -4,6 +4,7 @@ export interface Flashcard {
   transcription: string;
   translation: string;
   category?: string;
+  imageUrl?: string;
   createdAt: number;
 }
 

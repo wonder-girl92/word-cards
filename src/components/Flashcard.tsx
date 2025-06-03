@@ -48,42 +48,22 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
     try {
       setIsDownloading(true);
 
-      // Create a temporary container for the download version
       const container = document.createElement('div');
-      container.style.width = '800px';
-      container.style.height = '400px';
+      container.style.width = '400px';
+      container.style.height = '800px';
       container.style.position = 'absolute';
       container.style.left = '-9999px';
       document.body.appendChild(container);
 
-      // Create the download version of the card
       const downloadCard = document.createElement('div');
       downloadCard.style.width = '100%';
       downloadCard.style.height = '100%';
       downloadCard.style.display = 'flex';
-      downloadCard.style.gap = '0px';
-      downloadCard.style.padding = '20px';
+      downloadCard.style.flexDirection = 'column';
       downloadCard.style.backgroundColor = '#f5e6d3';
       downloadCard.style.position = 'relative';
 
-      // Front side
-      const frontSide = document.createElement('div');
-      frontSide.style.flex = '1';
-      frontSide.style.display = 'flex';
-      frontSide.style.flexDirection = 'column';
-      frontSide.style.justifyContent = 'center';
-      frontSide.style.alignItems = 'center';
-      frontSide.style.backgroundColor = '#f5e6d3';
-      frontSide.style.borderRadius = '12px';
-      frontSide.style.padding = '20px';
-      frontSide.style.borderRight = '2px dashed #8b7355';
-      frontSide.innerHTML = `
-        <h2 style="font-size: 32px; color: #2d3748; margin-bottom: 16px; font-weight: bold;">${card.word}</h2>
-        ${card.transcription ? `<p style="font-size: 24px; color: #4a5568;">${card.transcription}</p>` : ''}
-        ${card.category ? `<div style="position: absolute; top: 12px; left: 12px; background: rgba(255,255,255,0.8); padding: 4px 8px; border-radius: 12px; font-size: 14px; color: #4a5568;">${card.category}</div>` : ''}
-      `;
-
-      // Back side
+      // Back side (translation) - now on top
       const backSide = document.createElement('div');
       backSide.style.flex = '1';
       backSide.style.display = 'flex';
@@ -93,37 +73,73 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
       backSide.style.backgroundColor = '#f5e6d3';
       backSide.style.borderRadius = '12px';
       backSide.style.padding = '20px';
-      backSide.style.borderLeft = '2px dashed #8b7355';
+      backSide.style.borderBottom = '2px dashed #8b7355';
       backSide.innerHTML = `
         <h3 style="font-size: 24px; color: #4a5568; margin-bottom: 16px;">Translation</h3>
         <p style="font-size: 32px; color: #2d3748; font-weight: 500;">${card.translation}</p>
       `;
 
-      // Add scissors icon at the top of the dotted line
-      const scissorsIcon = document.createElement('div');
-      scissorsIcon.style.position = 'absolute';
-      scissorsIcon.style.top = '10px';
-      scissorsIcon.style.left = '50%';
-      scissorsIcon.style.transform = 'translateX(-50%)';
-      scissorsIcon.style.color = '#8b7355';
-      scissorsIcon.style.fontSize = '20px';
-      scissorsIcon.innerHTML = '✂️';
+      // Front side (word) - now on bottom
+      const frontSide = document.createElement('div');
+      frontSide.style.flex = '1';
+      frontSide.style.display = 'flex';
+      frontSide.style.flexDirection = 'column';
+      frontSide.style.justifyContent = 'center';
+      frontSide.style.alignItems = 'center';
+      frontSide.style.backgroundColor = '#f5e6d3';
+      frontSide.style.borderRadius = '12px';
+      frontSide.style.padding = '20px';
+      frontSide.style.borderTop = '2px dashed #8b7355';
 
-      downloadCard.appendChild(frontSide);
+      if (card.imageUrl) {
+        const imageContainer = document.createElement('div');
+        imageContainer.style.width = '150px';
+        imageContainer.style.height = '150px';
+        imageContainer.style.marginBottom = '16px';
+        imageContainer.style.borderRadius = '8px';
+        imageContainer.style.overflow = 'hidden';
+        
+        const image = document.createElement('img');
+        image.src = card.imageUrl;
+        image.style.width = '100%';
+        image.style.height = '100%';
+        image.style.objectFit = 'cover';
+        
+        imageContainer.appendChild(image);
+        frontSide.appendChild(imageContainer);
+      }
+
+      frontSide.innerHTML += `
+        <h2 style="font-size: 32px; color: #2d3748; margin-bottom: 16px; font-weight: bold;">${card.word}</h2>
+        ${card.transcription ? `<p style="font-size: 24px; color: #4a5568;">${card.transcription}</p>` : ''}
+      `;
+
+      if (card.category) {
+        const categoryDiv = document.createElement('div');
+        categoryDiv.style.position = 'absolute';
+        categoryDiv.style.top = '50%';
+        categoryDiv.style.transform = 'translateY(-50%)';
+        categoryDiv.style.left = '12px';
+        categoryDiv.style.background = 'rgba(255,255,255,0.8)';
+        categoryDiv.style.padding = '4px 8px';
+        categoryDiv.style.borderRadius = '12px';
+        categoryDiv.style.fontSize = '14px';
+        categoryDiv.style.color = '#4a5568';
+        categoryDiv.textContent = card.category;
+        downloadCard.appendChild(categoryDiv);
+      }
+
       downloadCard.appendChild(backSide);
-      downloadCard.appendChild(scissorsIcon);
+      downloadCard.appendChild(frontSide);
       container.appendChild(downloadCard);
 
-      // Capture the download version
       const canvas = await html2canvas(container, {
         backgroundColor: '#f5e6d3',
         scale: 2,
       });
 
-      // Clean up
       document.body.removeChild(container);
 
-      // Download the image
       const link = document.createElement('a');
       link.download = `flashcard-${card.word}.jpg`;
       link.href = canvas.toDataURL('image/jpeg', 0.9);
@@ -151,10 +167,19 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
       >
         {/* Front side */}
         <div 
-          className={`absolute w-full h-full backface-hidden rounded-xl shadow-md ${bgColor} p-6 flex flex-col justify-center ${
+          className={`absolute w-full h-full backface-hidden rounded-xl shadow-md ${bgColor} p-6 flex flex-col items-center justify-center ${
             isFlipped ? 'opacity-0' : 'opacity-100'
           }`}
         >
+          {card.imageUrl && (
+            <div className="w-24 h-24 mb-4 rounded-lg overflow-hidden">
+              <img 
+                src={card.imageUrl} 
+                alt={card.word}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          )}
           <div className="flex flex-col items-center justify-center text-gray-800">
             <h3 className="text-2xl font-bold mb-2">{card.word}</h3>
             {card.transcription && (

@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { FlashcardFormData } from '../types';
-import { Plus, X } from 'lucide-react';
+import { Plus, X, Image } from 'lucide-react';
 
 interface FlashcardFormProps {
   onSubmit: (data: FlashcardFormData) => void;
@@ -18,17 +18,26 @@ const FlashcardForm: React.FC<FlashcardFormProps> = ({
     transcription: initialData.transcription || '',
     translation: initialData.translation || '',
     category: initialData.category || '',
+    imageUrl: initialData.imageUrl || '',
   });
 
   const [errors, setErrors] = useState<Partial<Record<keyof FlashcardFormData, string>>>({});
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
     
-    // Clear error when user types
     if (errors[name as keyof FlashcardFormData]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
+    }
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setFormData(prev => ({ ...prev, imageUrl }));
     }
   };
 
@@ -73,6 +82,47 @@ const FlashcardForm: React.FC<FlashcardFormProps> = ({
       </div>
       
       <div className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Image (optional)
+          </label>
+          <div className="flex items-center space-x-2">
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 flex items-center"
+            >
+              <Image size={16} className="mr-2" />
+              Choose Image
+            </button>
+            {formData.imageUrl && (
+              <button
+                type="button"
+                onClick={() => setFormData(prev => ({ ...prev, imageUrl: '' }))}
+                className="text-red-600 hover:text-red-700 text-sm"
+              >
+                Remove
+              </button>
+            )}
+          </div>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="hidden"
+          />
+          {formData.imageUrl && (
+            <div className="mt-2">
+              <img
+                src={formData.imageUrl}
+                alt="Preview"
+                className="w-24 h-24 object-cover rounded-md"
+              />
+            </div>
+          )}
+        </div>
+
         <div>
           <label htmlFor="word" className="block text-sm font-medium text-gray-700 mb-1">
             English Word
