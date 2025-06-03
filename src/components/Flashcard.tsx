@@ -75,8 +75,8 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
       backSide.style.padding = '20px';
       backSide.style.borderBottom = '2px dashed #8b7355';
       backSide.innerHTML = `
-        <h3 style="font-size: 24px; color: #4a5568; margin-bottom: 16px;">Translation</h3>
-        <p style="font-size: 32px; color: #2d3748; font-weight: 500;">${card.translation}</p>
+        <h3 style="font-size: 24px; color: #4a5568; text-align: center; margin-bottom: 16px;">Translation</h3>
+        <p style="font-size: 32px; color: #2d3748; font-weight: 500; text-align: center;">${card.translation}</p>
       `;
 
       // Front side (word) - now on bottom
@@ -90,6 +90,7 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
       frontSide.style.borderRadius = '12px';
       frontSide.style.padding = '20px';
       frontSide.style.borderTop = '2px dashed #8b7355';
+      frontSide.style.position = 'relative';
 
       if (card.imageUrl) {
         const imageContainer = document.createElement('div');
@@ -110,23 +111,25 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
       }
 
       frontSide.innerHTML += `
-        <h2 style="font-size: 32px; color: #2d3748; margin-bottom: 16px; font-weight: bold;">${card.word}</h2>
-        ${card.transcription ? `<p style="font-size: 24px; color: #4a5568;">${card.transcription}</p>` : ''}
+        <h2 style="font-size: 32px; color: #2d3748; margin-bottom: 16px; font-weight: bold; text-align: center;">${card.word}</h2>
+        ${card.transcription ? `<p style="font-size: 24px; color: #4a5568; text-align: center;">${card.transcription}</p>` : ''}
       `;
 
       if (card.category) {
         const categoryDiv = document.createElement('div');
         categoryDiv.style.position = 'absolute';
-        categoryDiv.style.top = '50%';
-        categoryDiv.style.transform = 'translateY(-50%)';
-        categoryDiv.style.left = '12px';
+        categoryDiv.style.bottom = '12px';
+        categoryDiv.style.left = '50%';
+        categoryDiv.style.transform = 'translateX(-50%)';
         categoryDiv.style.background = 'rgba(255,255,255,0.8)';
         categoryDiv.style.padding = '4px 8px';
         categoryDiv.style.borderRadius = '12px';
         categoryDiv.style.fontSize = '14px';
         categoryDiv.style.color = '#4a5568';
+        categoryDiv.style.textAlign = 'center';
+        categoryDiv.style.lineHeight = '1.5';
         categoryDiv.textContent = card.category;
-        downloadCard.appendChild(categoryDiv);
+        frontSide.appendChild(categoryDiv);
       }
 
       downloadCard.appendChild(backSide);
@@ -181,9 +184,9 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
             </div>
           )}
           <div className="flex flex-col items-center justify-center text-gray-800">
-            <h3 className="text-2xl font-bold mb-2">{card.word}</h3>
+            <h3 className="text-2xl font-bold mb-2 text-center">{card.word}</h3>
             {card.transcription && (
-              <p className="text-lg text-gray-600">{card.transcription}</p>
+              <p className="text-lg text-gray-600 text-center">{card.transcription}</p>
             )}
             {card.category && (
               <div className="absolute top-3 left-3 bg-white/80 text-gray-700 text-xs py-1 px-2 rounded-full">
@@ -203,8 +206,8 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
           }`}
         >
           <div className="flex flex-col items-center justify-center">
-            <h3 className="text-lg text-gray-600 mb-2">Translation</h3>
-            <p className="text-2xl font-medium text-gray-800">{card.translation}</p>
+            <h3 className="text-lg text-gray-600 mb-2 text-center">Translation</h3>
+            <p className="text-2xl font-medium text-gray-800 text-center">{card.translation}</p>
             {card.category && (
               <div className="absolute top-3 left-3 bg-white/80 text-gray-700 text-xs py-1 px-2 rounded-full">
                 {card.category}
