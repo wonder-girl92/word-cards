@@ -75,7 +75,7 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
         categoryDiv.style.top = '16px';
         categoryDiv.style.left = '16px';
         categoryDiv.style.background = 'rgba(255,255,255,0.8)';
-        // categoryDiv.style.padding = '8px 12px';
+        categoryDiv.style.padding = '8px 12px';
         categoryDiv.style.borderRadius = '12px';
         categoryDiv.style.fontSize = '14px';
         categoryDiv.style.color = '#4a5568';
@@ -84,8 +84,7 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
         categoryDiv.style.alignItems = 'center';
         categoryDiv.style.justifyContent = 'center';
         categoryDiv.style.textAlign = 'center';
-        // categoryDiv.style.lineHeight = '1';
-        categoryDiv.style.minWidth = '80px';
+        categoryDiv.style.lineHeight = '1';
         categoryDiv.style.minHeight = '32px';
         categoryDiv.textContent = card.category;
         downloadCard.appendChild(categoryDiv);
@@ -160,7 +159,7 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
       container.appendChild(downloadCard);
 
       const canvas = await html2canvas(container, {
-        backgroundColor: '#c9bcab',
+        backgroundColor: '#f5e6d3',
         scale: 2,
         width: 400,
         height: 500,
