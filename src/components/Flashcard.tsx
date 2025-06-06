@@ -160,7 +160,7 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
       container.appendChild(downloadCard);
 
       const canvas = await html2canvas(container, {
-        backgroundColor: '#f5e6d3',
+        backgroundColor: '#c9bcab',
         scale: 2,
         width: 400,
         height: 500,
