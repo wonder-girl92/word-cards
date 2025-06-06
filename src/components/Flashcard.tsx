@@ -207,10 +207,10 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
               />
             </div>
           )}
-          <div className="flex flex-col items-center justify-center text-gray-800">
+          <div className="flex flex-col items-center justify-center text-gray-800 flex-1">
             <h3 className="text-2xl font-bold mb-2 text-center">{card.word}</h3>
             {card.transcription && (
-              <p className="text-lg text-gray-600 text-center">{card.transcription}</p>
+              <p className="text-lg text-gray-600 text-center mb-4">{card.transcription}</p>
             )}
             {card.category && (
               <div className="absolute top-3 left-3 bg-white/80 text-gray-700 text-xs py-1 px-2 rounded-full">
@@ -218,7 +218,7 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
               </div>
             )}
           </div>
-          <div className="text-gray-600 text-sm absolute bottom-3 left-0 right-0 text-center">
+          <div className="text-blue-600 text-sm absolute bottom-3 left-0 right-0 text-center">
             Click to flip
           </div>
         </div>
@@ -238,45 +238,38 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
               </div>
             )}
           </div>
-          <div className="text-gray-600 text-sm absolute bottom-3 left-0 right-0 text-center">
+          <div className="text-blue-600 text-sm absolute bottom-3 left-0 right-0 text-center">
             Click to flip back
           </div>
-        </div>
 
-        {/* Control buttons - positioned on the right side regardless of flip state */}
-        {!isDeleting && !isDownloading && (
-          <div 
-            className="absolute top-3 right-3 flex space-x-2 z-10" 
-            onClick={e => e.stopPropagation()}
-            style={{ 
-              transform: isFlipped ? 'rotateY(180deg)' : 'none',
-              transformStyle: 'preserve-3d'
-            }}
-          >
-            <button 
-              onClick={handleDownload}
-              className="p-1.5 bg-white/80 hover:bg-white/90 text-gray-700 rounded-full transition-colors"
-            >
-              <Download size={16} />
-            </button>
-            {onEdit && (
+          {/* Control buttons on back side */}
+          {!isDeleting && !isDownloading && (
+            <div className="absolute top-3 right-3 flex space-x-2 z-10" onClick={e => e.stopPropagation()}>
               <button 
-                onClick={handleEdit}
+                onClick={handleDownload}
                 className="p-1.5 bg-white/80 hover:bg-white/90 text-gray-700 rounded-full transition-colors"
               >
-                <Edit size={16} />
+                <Download size={16} />
               </button>
-            )}
-            {onDelete && (
-              <button 
-                onClick={handleDelete}
-                className="p-1.5 bg-white/80 hover:bg-red-400 text-gray-700 rounded-full transition-colors"
-              >
-                <Trash2 size={16} />
-              </button>
-            )}
-          </div>
-        )}
+              {onEdit && (
+                <button 
+                  onClick={handleEdit}
+                  className="p-1.5 bg-white/80 hover:bg-white/90 text-gray-700 rounded-full transition-colors"
+                >
+                  <Edit size={16} />
+                </button>
+              )}
+              {onDelete && (
+                <button 
+                  onClick={handleDelete}
+                  className="p-1.5 bg-white/80 hover:bg-red-400 text-gray-700 rounded-full transition-colors"
+                >
+                  <Trash2 size={16} />
+                </button>
+              )}
+            </div>
+          )}
+        </div>
 
         {/* Delete confirmation */}
         {isDeleting && (
