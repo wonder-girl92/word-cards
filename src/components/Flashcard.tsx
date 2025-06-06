@@ -80,6 +80,11 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
         categoryDiv.style.fontSize = '14px';
         categoryDiv.style.color = '#4a5568';
         categoryDiv.style.fontWeight = '500';
+        categoryDiv.style.display = 'flex';
+        categoryDiv.style.alignItems = 'center';
+        categoryDiv.style.justifyContent = 'center';
+        categoryDiv.style.textAlign = 'center';
+        categoryDiv.style.lineHeight = '1';
         categoryDiv.textContent = card.category;
         downloadCard.appendChild(categoryDiv);
       }
@@ -237,9 +242,14 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
           </div>
         </div>
 
-        {/* Control buttons */}
+        {/* Control buttons - positioned based on flip state */}
         {!isDeleting && !isDownloading && (
-          <div className="absolute top-3 right-3 flex space-x-2 z-10" onClick={e => e.stopPropagation()}>
+          <div 
+            className={`absolute top-3 z-10 flex space-x-2 transition-all duration-500 ${
+              isFlipped ? 'right-3' : 'right-3'
+            }`} 
+            onClick={e => e.stopPropagation()}
+          >
             <button 
               onClick={handleDownload}
               className="p-1.5 bg-white/80 hover:bg-white/90 text-gray-700 rounded-full transition-colors"
