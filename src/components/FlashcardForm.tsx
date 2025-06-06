@@ -36,8 +36,12 @@ const FlashcardForm: React.FC<FlashcardFormProps> = ({
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setFormData(prev => ({ ...prev, imageUrl }));
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const imageUrl = event.target?.result as string;
+        setFormData(prev => ({ ...prev, imageUrl }));
+      };
+      reader.readAsDataURL(file);
     }
   };
 

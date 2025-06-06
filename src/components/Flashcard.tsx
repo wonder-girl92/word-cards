@@ -50,7 +50,7 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
 
       const container = document.createElement('div');
       container.style.width = '400px';
-      container.style.height = '800px';
+      container.style.height = '500px';
       container.style.position = 'absolute';
       container.style.left = '-9999px';
       document.body.appendChild(container);
@@ -60,45 +60,41 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
       downloadCard.style.height = '100%';
       downloadCard.style.display = 'flex';
       downloadCard.style.flexDirection = 'column';
+      downloadCard.style.justifyContent = 'center';
+      downloadCard.style.alignItems = 'center';
       downloadCard.style.backgroundColor = '#f5e6d3';
+      downloadCard.style.borderRadius = '12px';
+      downloadCard.style.padding = '40px';
       downloadCard.style.position = 'relative';
+      downloadCard.style.boxSizing = 'border-box';
 
-      // Back side (translation) - now on top
-      const backSide = document.createElement('div');
-      backSide.style.flex = '1';
-      backSide.style.display = 'flex';
-      backSide.style.flexDirection = 'column';
-      backSide.style.justifyContent = 'center';
-      backSide.style.alignItems = 'center';
-      backSide.style.backgroundColor = '#f5e6d3';
-      backSide.style.borderRadius = '12px';
-      backSide.style.padding = '20px';
-      backSide.style.borderBottom = '2px dashed #8b7355';
-      backSide.innerHTML = `
-        <h3 style="font-size: 24px; color: #4a5568; text-align: center; margin-bottom: 16px;">Translation</h3>
-        <p style="font-size: 32px; color: #2d3748; font-weight: 500; text-align: center;">${card.translation}</p>
-      `;
+      // Category in top left corner
+      if (card.category) {
+        const categoryDiv = document.createElement('div');
+        categoryDiv.style.position = 'absolute';
+        categoryDiv.style.top = '16px';
+        categoryDiv.style.left = '16px';
+        categoryDiv.style.background = 'rgba(255,255,255,0.8)';
+        categoryDiv.style.padding = '8px 12px';
+        categoryDiv.style.borderRadius = '12px';
+        categoryDiv.style.fontSize = '14px';
+        categoryDiv.style.color = '#4a5568';
+        categoryDiv.style.fontWeight = '500';
+        categoryDiv.textContent = card.category;
+        downloadCard.appendChild(categoryDiv);
+      }
 
-      // Front side (word) - now on bottom
-      const frontSide = document.createElement('div');
-      frontSide.style.flex = '1';
-      frontSide.style.display = 'flex';
-      frontSide.style.flexDirection = 'column';
-      frontSide.style.justifyContent = 'center';
-      frontSide.style.alignItems = 'center';
-      frontSide.style.backgroundColor = '#f5e6d3';
-      frontSide.style.borderRadius = '12px';
-      frontSide.style.padding = '20px';
-      frontSide.style.borderTop = '2px dashed #8b7355';
-      frontSide.style.position = 'relative';
-
+      // Image if exists
       if (card.imageUrl) {
         const imageContainer = document.createElement('div');
-        imageContainer.style.width = '150px';
-        imageContainer.style.height = '150px';
-        imageContainer.style.marginBottom = '16px';
-        imageContainer.style.borderRadius = '8px';
+        imageContainer.style.width = '200px';
+        imageContainer.style.height = '200px';
+        imageContainer.style.marginBottom = '24px';
+        imageContainer.style.borderRadius = '12px';
         imageContainer.style.overflow = 'hidden';
+        imageContainer.style.display = 'flex';
+        imageContainer.style.alignItems = 'center';
+        imageContainer.style.justifyContent = 'center';
         
         const image = document.createElement('img');
         image.src = card.imageUrl;
@@ -107,48 +103,60 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
         image.style.objectFit = 'cover';
         
         imageContainer.appendChild(image);
-        frontSide.appendChild(imageContainer);
+        downloadCard.appendChild(imageContainer);
       }
 
-      frontSide.innerHTML += `
-        <h2 style="font-size: 32px; color: #2d3748; margin-bottom: 16px; font-weight: bold; text-align: center;">${card.word}</h2>
-        ${card.transcription ? `<p style="font-size: 24px; color: #4a5568; text-align: center;">${card.transcription}</p>` : ''}
-      `;
+      // Word
+      const wordDiv = document.createElement('h2');
+      wordDiv.style.fontSize = '36px';
+      wordDiv.style.color = '#2d3748';
+      wordDiv.style.marginBottom = '12px';
+      wordDiv.style.fontWeight = 'bold';
+      wordDiv.style.textAlign = 'center';
+      wordDiv.style.lineHeight = '1.2';
+      wordDiv.textContent = card.word;
+      downloadCard.appendChild(wordDiv);
 
-      // Add Razet signature
+      // Transcription
+      if (card.transcription) {
+        const transcriptionDiv = document.createElement('p');
+        transcriptionDiv.style.fontSize = '20px';
+        transcriptionDiv.style.color = '#4a5568';
+        transcriptionDiv.style.textAlign = 'center';
+        transcriptionDiv.style.marginBottom = '16px';
+        transcriptionDiv.style.lineHeight = '1.3';
+        transcriptionDiv.textContent = card.transcription;
+        downloadCard.appendChild(transcriptionDiv);
+      }
+
+      // Translation
+      const translationDiv = document.createElement('p');
+      translationDiv.style.fontSize = '24px';
+      translationDiv.style.color = '#2d3748';
+      translationDiv.style.fontWeight = '500';
+      translationDiv.style.textAlign = 'center';
+      translationDiv.style.lineHeight = '1.3';
+      translationDiv.textContent = card.translation;
+      downloadCard.appendChild(translationDiv);
+
+      // Signature
       const signature = document.createElement('div');
       signature.style.position = 'absolute';
-      signature.style.bottom = '12px';
-      signature.style.right = '12px';
+      signature.style.bottom = '16px';
+      signature.style.right = '16px';
       signature.style.fontStyle = 'italic';
       signature.style.color = '#8b7355';
       signature.style.fontSize = '14px';
-      signature.textContent = 'Razet';
-      frontSide.appendChild(signature);
+      signature.textContent = 'by Yusupova';
+      downloadCard.appendChild(signature);
 
-      if (card.category) {
-        const categoryDiv = document.createElement('div');
-        categoryDiv.style.position = 'absolute';
-        categoryDiv.style.top = '12px';
-        categoryDiv.style.left = '12px';
-        categoryDiv.style.background = 'rgba(255,255,255,0.8)';
-        categoryDiv.style.padding = '4px 8px';
-        categoryDiv.style.borderRadius = '12px';
-        categoryDiv.style.fontSize = '14px';
-        categoryDiv.style.color = '#4a5568';
-        categoryDiv.style.textAlign = 'center';
-        categoryDiv.style.lineHeight = '1.5';
-        categoryDiv.textContent = card.category;
-        frontSide.appendChild(categoryDiv);
-      }
-
-      downloadCard.appendChild(backSide);
-      downloadCard.appendChild(frontSide);
       container.appendChild(downloadCard);
 
       const canvas = await html2canvas(container, {
         backgroundColor: '#f5e6d3',
         scale: 2,
+        width: 400,
+        height: 500,
       });
 
       document.body.removeChild(container);
