@@ -68,7 +68,7 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
       downloadCard.style.position = 'relative';
       downloadCard.style.boxSizing = 'border-box';
 
-      // Category in top left corner
+      // Category in top left corner with proper vertical centering
       if (card.category) {
         const categoryDiv = document.createElement('div');
         categoryDiv.style.position = 'absolute';
@@ -85,6 +85,7 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
         categoryDiv.style.justifyContent = 'center';
         categoryDiv.style.textAlign = 'center';
         categoryDiv.style.lineHeight = '1';
+        categoryDiv.style.minHeight = '32px';
         categoryDiv.textContent = card.category;
         downloadCard.appendChild(categoryDiv);
       }
@@ -242,13 +243,15 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
           </div>
         </div>
 
-        {/* Control buttons - positioned based on flip state */}
+        {/* Control buttons - positioned on the right side regardless of flip state */}
         {!isDeleting && !isDownloading && (
           <div 
-            className={`absolute top-3 z-10 flex space-x-2 transition-all duration-500 ${
-              isFlipped ? 'right-3' : 'right-3'
-            }`} 
+            className="absolute top-3 right-3 flex space-x-2 z-10" 
             onClick={e => e.stopPropagation()}
+            style={{ 
+              transform: isFlipped ? 'rotateY(180deg)' : 'none',
+              transformStyle: 'preserve-3d'
+            }}
           >
             <button 
               onClick={handleDownload}
