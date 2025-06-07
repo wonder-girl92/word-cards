@@ -154,7 +154,7 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
       signature.style.fontStyle = 'italic';
       signature.style.color = '#8b7355';
       signature.style.fontSize = '14px';
-      signature.textContent = 'by Yusupova';
+      signature.textContent = 'by Razet Yusupova';
       downloadCard.appendChild(signature);
 
       container.appendChild(downloadCard);
