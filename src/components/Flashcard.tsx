@@ -68,7 +68,7 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
       downloadCard.style.position = 'relative';
       downloadCard.style.boxSizing = 'border-box';
 
-      // Category in top left corner with proper vertical centering
+      // Category in top left corner with flexbox centering
       if (card.category) {
         const categoryDiv = document.createElement('div');
         categoryDiv.style.position = 'absolute';
@@ -83,9 +83,8 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
         categoryDiv.style.display = 'flex';
         categoryDiv.style.alignItems = 'center';
         categoryDiv.style.justifyContent = 'center';
-        categoryDiv.style.textAlign = 'center';
-        categoryDiv.style.lineHeight = '1';
-        categoryDiv.style.minHeight = '32px';
+        categoryDiv.style.height = '32px';
+        categoryDiv.style.width = 'auto';
         categoryDiv.textContent = card.category;
         downloadCard.appendChild(categoryDiv);
       }
@@ -221,28 +220,8 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
           <div className="text-blue-600 text-sm absolute bottom-3 left-0 right-0 text-center">
             Click to flip
           </div>
-        </div>
 
-        {/* Back side */}
-        <div 
-          className={`absolute w-full h-full backface-hidden rounded-xl shadow-md ${bgColor} p-6 flex flex-col justify-center rotate-y-180 ${
-            isFlipped ? 'opacity-100' : 'opacity-0'
-          }`}
-        >
-          <div className="flex flex-col items-center justify-center">
-            <h3 className="text-lg text-gray-600 mb-2 text-center">Translation</h3>
-            <p className="text-2xl font-medium text-gray-800 text-center">{card.translation}</p>
-            {card.category && (
-              <div className="absolute top-3 left-3 bg-white/80 text-gray-700 text-xs py-1 px-2 rounded-full">
-                {card.category}
-              </div>
-            )}
-          </div>
-          <div className="text-blue-600 text-sm absolute bottom-3 left-0 right-0 text-center">
-            Click to flip back
-          </div>
-
-          {/* Control buttons on back side */}
+          {/* Control buttons on front side */}
           {!isDeleting && !isDownloading && (
             <div className="absolute top-3 right-3 flex space-x-2 z-10" onClick={e => e.stopPropagation()}>
               <button 
@@ -271,10 +250,30 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
           )}
         </div>
 
-        {/* Delete confirmation */}
+        {/* Back side */}
+        <div 
+          className={`absolute w-full h-full backface-hidden rounded-xl shadow-md ${bgColor} p-6 flex flex-col justify-center rotate-y-180 ${
+            isFlipped ? 'opacity-100' : 'opacity-0'
+          }`}
+        >
+          <div className="flex flex-col items-center justify-center">
+            <h3 className="text-lg text-gray-600 mb-2 text-center">Translation</h3>
+            <p className="text-2xl font-medium text-gray-800 text-center">{card.translation}</p>
+            {card.category && (
+              <div className="absolute top-3 left-3 bg-white/80 text-gray-700 text-xs py-1 px-2 rounded-full">
+                {card.category}
+              </div>
+            )}
+          </div>
+          <div className="text-blue-600 text-sm absolute bottom-3 left-0 right-0 text-center">
+            Click to flip back
+          </div>
+        </div>
+
+        {/* Delete confirmation - positioned outside the 3D transform */}
         {isDeleting && (
           <div 
-            className="absolute inset-0 bg-black/70 flex items-center justify-center z-20 rounded-xl"
+            className="absolute inset-0 bg-black/70 flex items-center justify-center z-30 rounded-xl"
             onClick={e => e.stopPropagation()}
           >
             <div className="bg-white p-4 rounded-lg text-center">
