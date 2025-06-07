@@ -199,7 +199,7 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
           >
             {/* Control buttons on front side */}
             {!isDeleting && !isDownloading && (
-              <div className="flex justify-end space-x-2 mb-4" onClick={e => e.stopPropagation()}>
+              <div className="flex justify-end space-x-2 mb-4\" onClick={e => e.stopPropagation()}>
                 <button 
                   onClick={handleDownload}
                   className="p-1.5 bg-white/80 hover:bg-white/90 text-gray-700 rounded-full transition-colors"
