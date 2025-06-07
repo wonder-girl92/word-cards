@@ -68,6 +68,29 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
       downloadCard.style.position = 'relative';
       downloadCard.style.boxSizing = 'border-box';
 
+      // Category in top left corner with proper vertical centering
+            if (card.category) {
+                const categoryDiv = document.createElement('div');
+                categoryDiv.style.position = 'absolute';
+                categoryDiv.style.top = '16px';
+                categoryDiv.style.left = '16px';
+                // categoryDiv.style.background = 'rgba(255,255,255,0.8)';
+                // categoryDiv.style.padding = '8px 12px';
+                categoryDiv.style.borderRadius = '12px';
+                categoryDiv.style.fontSize = '14px';
+                categoryDiv.style.color = '#4a5568';
+                categoryDiv.style.fontWeight = '500';
+                categoryDiv.style.display = 'flex';
+                categoryDiv.style.alignItems = 'center';
+                categoryDiv.style.justifyContent = 'center';
+                categoryDiv.style.textAlign = 'center';
+                // categoryDiv.style.lineHeight = '1';
+                // categoryDiv.style.minWidth = '80px';
+                // categoryDiv.style.minHeight = '32px';
+                categoryDiv.textContent = card.category;
+                downloadCard.appendChild(categoryDiv);
+            }
+
       // Image if exists
       if (card.imageUrl) {
         const imageContainer = document.createElement('div');
