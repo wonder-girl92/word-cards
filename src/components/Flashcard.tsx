@@ -197,33 +197,43 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
               isFlipped ? 'opacity-0' : 'opacity-100'
             }`}
           >
-            {/* Control buttons on front side */}
-            {!isDeleting && !isDownloading && (
-              <div className="flex justify-end space-x-2 mb-4\" onClick={e => e.stopPropagation()}>
-                <button 
-                  onClick={handleDownload}
-                  className="p-1.5 bg-white/80 hover:bg-white/90 text-gray-700 rounded-full transition-colors"
-                >
-                  <Download size={16} />
-                </button>
-                {onEdit && (
+            {/* Category and control buttons on the same level */}
+            <div className="flex justify-between items-center mb-4">
+              {card.category ? (
+                <div className="bg-white/80 text-gray-700 text-xs py-1 px-2 rounded-full">
+                  {card.category}
+                </div>
+              ) : (
+                <div></div>
+              )}
+              
+              {!isDeleting && !isDownloading && (
+                <div className="flex space-x-2" onClick={e => e.stopPropagation()}>
                   <button 
-                    onClick={handleEdit}
+                    onClick={handleDownload}
                     className="p-1.5 bg-white/80 hover:bg-white/90 text-gray-700 rounded-full transition-colors"
                   >
-                    <Edit size={16} />
+                    <Download size={16} />
                   </button>
-                )}
-                {onDelete && (
-                  <button 
-                    onClick={handleDelete}
-                    className="p-1.5 bg-white/80 hover:bg-red-400 text-gray-700 rounded-full transition-colors"
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                )}
-              </div>
-            )}
+                  {onEdit && (
+                    <button 
+                      onClick={handleEdit}
+                      className="p-1.5 bg-white/80 hover:bg-white/90 text-gray-700 rounded-full transition-colors"
+                    >
+                      <Edit size={16} />
+                    </button>
+                  )}
+                  {onDelete && (
+                    <button 
+                      onClick={handleDelete}
+                      className="p-1.5 bg-white/80 hover:bg-red-400 text-gray-700 rounded-full transition-colors"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
 
             {card.imageUrl && (
               <div className="w-24 h-24 mb-4 rounded-lg overflow-hidden mx-auto">
@@ -239,11 +249,6 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
               <h3 className="text-2xl font-bold mb-2 text-center">{card.word}</h3>
               {card.transcription && (
                 <p className="text-lg text-gray-600 text-center mb-6">{card.transcription}</p>
-              )}
-              {card.category && (
-                <div className="absolute top-3 left-3 bg-white/80 text-gray-700 text-xs py-1 px-2 rounded-full">
-                  {card.category}
-                </div>
               )}
             </div>
             <div className="text-blue-600 text-sm text-center">
