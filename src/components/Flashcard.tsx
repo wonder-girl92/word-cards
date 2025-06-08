@@ -243,8 +243,8 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
               </div>
             )}
             
-            <div className="flex flex-col items-center justify-center text-gray-800 flex-1">
-              <h3 className="text-2xl font-bold mb-2 text-center">{card.word}</h3>
+            <div className="flex flex-col items-center justify-center flex-1">
+              <h3 className="text-2xl font-bold mb-2 text-center text-[#732727]">{card.word}</h3>
               {card.transcription && (
                 <p className="text-lg text-gray-600 text-center mb-6">{card.transcription}</p>
               )}
