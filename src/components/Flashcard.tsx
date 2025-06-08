@@ -111,7 +111,7 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onEdit, onDelete }) => {
       // Word
       const wordDiv = document.createElement('h2');
       wordDiv.style.fontSize = '36px';
-      wordDiv.style.color = '#2d3748';
+      wordDiv.style.color = '#482d2d';
       wordDiv.style.marginBottom = '12px';
       wordDiv.style.fontWeight = 'bold';
       wordDiv.style.textAlign = 'center';
